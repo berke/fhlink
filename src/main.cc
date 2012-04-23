@@ -79,7 +79,7 @@ public:
 
 	void push(const char *v) {
 		if (*v) {
-			if ((u.size() == 0 || u[u.size() - 1] != '/') &&
+			if (u.size() > 0 && u[u.size() - 1] != '/' &&
 				v[0] != '/')
 				u += '/';
 			u += v;
@@ -643,11 +643,12 @@ namespace file_utils
 			rc = rename(t_i.c_str(), t_i_bak.c_str());
 			if (rc < 0) {
 				talker.warning("Skipping: can't rename "
-					"'%s' to '%s': %s\n",
+					"'%s' to '%s': %s",
 					t_i.c_str(), t_i_bak.c_str(),
 					strerror(errno));
 				pg.occupied();
-				while (-- i > 0) {
+				if (i) do {
+					i --;
 					const string t_i = targets[i];
 					t_i_bak = backup_names[i];
 					rc = rename(t_i_bak.c_str(),
@@ -656,13 +657,13 @@ namespace file_utils
 						talker.warning(
 							"Furthermore, can't "
 							"rename "
-							"'%s' to '%s': %s\n",
+							"'%s' to '%s': %s",
 							t_i_bak.c_str(),
 							t_i.c_str(),
 							strerror(errno));
 						pg.occupied();
 					}
-				}
+				} while(i > 0);
 				return;
 			}
 		}
@@ -674,7 +675,7 @@ namespace file_utils
 			if (rc < 0) {
 				talker.warning(
 					"Warning: can't link "
-					"'%s' to '%s': %s\n",
+					"'%s' to '%s': %s",
 					source.c_str(), t_i.c_str(),
 					strerror(errno));
 				pg.occupied();
@@ -683,7 +684,7 @@ namespace file_utils
 				if (rc < 0) {
 					talker.warning(
 						"Warning: can't restore "
-						"'%s' to '%s': %s\n",
+						"'%s' to '%s': %s",
 						t_i.c_str(), t_i_bak.c_str(),
 						strerror(errno));
 				}
@@ -692,7 +693,7 @@ namespace file_utils
 				if (rc < 0) {
 					talker.warning(
 						"Warning: can't remove "
-						"'%s': %s\n",
+						"'%s': %s",
 						t_i_bak.c_str(),
 						strerror(errno));
 					pg.occupied();
@@ -1268,9 +1269,9 @@ public:
 			int rc = chmod(source.c_str(),
 					fiv[0]->mode & ~chmod_clear);
 			if (rc < 0) {
-				fmt::fpf(stderr,
+				talker.warning(
 					"Warning: can't chmod "
-					"'%s': %s\n",
+					"'%s': %s",
 					source.c_str(),
 					strerror(errno));
 				pg.occupied();
