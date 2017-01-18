@@ -479,10 +479,10 @@ public:
 				fmt::fpf(out, ".");
 		} else {
 			if (maximum)
-				fmt::fpf(out, "%7"PRIu64"/%7"PRIu64" ",
+				fmt::fpf(out, "%7" PRIu64 "/%7" PRIu64 " ",
 					count >> shift, maximum >> shift);
 			else
-				fmt::fpf(out, "%16"PRIu64" ", count >> shift);
+				fmt::fpf(out, "%16" PRIu64 " ", count >> shift);
 
 			if (line_len > available_for_line) {
 				line = line + line_len - available_for_line - 3;
@@ -1086,7 +1086,7 @@ public:
 	void register_collisions(uint64_t hash,
 			const file_id &fid, file_infos &fiv)
 	{
-		string u = formatter::sprintf("collisions 0x%016"PRIx64,
+		string u = formatter::sprintf("collisions 0x%016" PRIx64,
 				hash);
 		display_files(u.c_str(), fid, fiv);
 	}
@@ -1217,7 +1217,7 @@ public:
 			try {
 				uint64_t sum = c.checksum(u.c_str());
 				if (debug)
-					fmt::pf("csum 0x%016"PRIx64" '%s'\n",
+					fmt::pf("csum 0x%016" PRIx64 " '%s'\n",
 						sum, u.c_str());
 				resolve[sum].push_back(fi);
 			} catch(...) {
